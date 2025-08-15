@@ -1,0 +1,508 @@
+{
+  "servers": [
+    {
+      "id": 1,
+      "server_id": "awslabs.aws-api-mcp-server",
+      "name": "AWS API MCP Server",
+      "description": "The AWS API MCP Server is an AI assistant tool that bridges AI assistants and AWS services through programmatic AWS CLI commands. Features comprehensive AWS CLI support with command validation to prevent model hallucination, security-first design with multiple protection layers including read-only mode for safe resource exploration, and flexible credential management. Provides access to latest AWS API features for creating, updating, and managing AWS resources. Includes tools for executing AWS CLI commands and generating commands from natural language queries. Ideal for developers seeking secure, programmatic AWS resource management in testing, development, and evaluation environments.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": ["awslabs.aws-api-mcp-server@latest"],
+      "env": {
+        "AWS_REGION": "{{env:aws_region}}",
+        "AWS_API_MCP_PROFILE_NAME": "{{env:aws_profile}}",
+        "READ_OPERATIONS_ONLY": "{{env:read_only_mode}}",
+        "REQUIRE_MUTATION_CONSENT": "{{env:require_consent}}",
+        "AWS_API_MCP_TELEMETRY": "{{env:enable_telemetry}}"
+      },
+      "categories": ["DEVELOPMENT"],
+      "capabilities": ["aws_cli", "aws_api", "infrastructure_management", "call_aws", "suggest_aws_commands"],
+      "domains": ["aws", "cloud", "infrastructure"],
+      "keywords": ["aws", "mcp", "api", "cli", "infrastructure"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Configure AWS credentials:\\n   - aws configure (for default profile)\\n   - Or set AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY env vars\\n3. Set preferences:\\n   - vault set aws_region 'your-preferred-region' (default: us-east-1)\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set read_only_mode 'true' (recommended for safety)\\n   - vault set require_consent 'true' (recommended)\\n   - vault set enable_telemetry 'true' (optional)\\n4. Ensure proper IAM permissions for intended operations"
+    },
+    {
+      "id": 2,
+      "server_id": "aws-knowledge-mcp-server",
+      "name": "AWS Knowledge MCP Server",
+      "description": "A fully managed remote MCP server providing comprehensive, real-time access to AWS knowledge and documentation resources. Offers up-to-date AWS documentation, API references, architectural guidance, getting started guides, builder center content, blog posts, and Well-Architected guidance. Features natural language query support for AWS technologies, structured knowledge access for AI agents, and minimal local setup requirements. Currently in preview release with no AWS account required, accessible via HTTP transport and subject to rate limits. Includes tools for documentation search and retrieval, covering latest AWS documentation, API references, What's New posts, and best practices for AWS APIs and services.",
+      "version": "1.0.0",
+      "execution_type": "REMOTE",
+      "security_level": "PUBLIC",
+      "command": "uvx",
+      "args": ["mcp-proxy", "--transport", "streamablehttp", "https://knowledge-mcp.global.api.aws"],
+      "env": {},
+      "categories": ["DOCUMENTATION"],
+      "capabilities": ["aws_documentation", "best_practices", "api_reference", "getting_started", "search_documentation", "read_documentation", "recommend"],
+      "domains": ["aws", "documentation", "knowledge"],
+      "keywords": ["aws", "mcp", "documentation", "knowledge", "best-practices"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. No additional configuration required - this is a fully managed remote server\\n3. No AWS account needed\\n4. Subject to rate limits\\n5. Test connection: npx @modelcontextprotocol/inspector https://knowledge-mcp.global.api.aws"
+    },
+    {
+      "id": 3,
+      "server_id": "awslabs.aurora-dsql-mcp-server",
+      "name": "Amazon Aurora DSQL MCP Server",
+      "description": "An AWS Labs Model Context Protocol (MCP) server designed specifically for Aurora DSQL database interactions. This server bridges natural language queries and structured database operations by converting human-readable questions into PostgreSQL-compatible SQL queries and executing them against configured Aurora DSQL clusters. Features intelligent query translation from natural language to SQL, connection reuse for improved performance, and security-first design with read-only mode by default and optional write capabilities via --allow-writes flag. Supports IAM role-based database authentication for secure access control. Ideal for AI-assisted database querying, data exploration, and analytical workflows where users need to interact with Aurora DSQL databases using natural language. Requires AWS account with Aurora DSQL cluster and appropriate IAM permissions for database access. Must run locally on the same host as the LLM client with configured AWS credentials.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": [
+        "awslabs.aurora-dsql-mcp-server@latest",
+        "--cluster_endpoint",
+        "{{env:aurora_dsql_cluster_endpoint}}",
+        "--region",
+        "{{env:aurora_dsql_region}}",
+        "--database_user",
+        "{{env:aurora_dsql_username}}",
+        "--profile",
+        "{{env:aws_profile}}",
+        "{{env:allow_writes_flag}}"
+      ],
+      "env": {"FASTMCP_LOG_LEVEL": "ERROR"},
+      "categories": ["DATA"],
+      "capabilities": ["sql_query", "database_access", "aurora_dsql", "postgres_compatible"],
+      "domains": ["aws", "database", "sql", "aurora"],
+      "keywords": ["aws", "mcp", "aurora", "dsql", "sql", "database"],
+      "setup_instructions": "1. Create an Aurora DSQL cluster in AWS Console\\n2. Note your cluster endpoint and region\\n3. Store credentials in your local vault:\\n   - vault set aurora_dsql_cluster_endpoint 'your-cluster-endpoint'\\n   - vault set aurora_dsql_region 'your-region'\\n   - vault set aurora_dsql_username 'your-username'\\n4. Configure AWS credentials via aws configure\\n5. For write access, set allow_writes_flag to '--allow-writes' (optional)"
+    },
+    {
+      "id": 4,
+      "server_id": "awslabs.mysql-mcp-server",
+      "name": "MySQL MCP Server",
+      "description": "An AWS Labs Model Context Protocol (MCP) server designed for seamless MySQL database interactions through natural language processing. This server converts human-readable questions into MySQL-compatible SQL queries and executes them against configured Aurora MySQL databases via RDS Data API. Features intelligent natural language to SQL query translation, secure credential management through AWS Secrets Manager integration, and flexible read-only or read-write database operations. Supports local execution alongside LLM clients with AWS profile-based authentication and regional configuration flexibility. Default mode operates in read-only for security, with configurable write permissions for DML/DDL queries when needed. Ideal for AI-assisted database querying, data exploration, reporting workflows, and analytical tasks where users need to interact with MySQL databases using conversational language. Requires Python 3.10, AWS account with Aurora MySQL cluster, RDS Data API enabled, and appropriate IAM permissions for RDS Data API and Secrets Manager access. Must run locally with configured AWS credentials for secure database connectivity.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": [
+        "awslabs.mysql-mcp-server@latest",
+        "--resource_arn",
+        "{{env:mysql_resource_arn}}",
+        "--secret_arn", 
+        "{{env:mysql_secret_arn}}",
+        "--database",
+        "{{env:mysql_database}}",
+        "--region",
+        "{{env:mysql_region}}",
+        "--readonly",
+        "{{env:mysql_readonly}}"
+      ],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:mysql_region}}",
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "categories": ["DATA"],
+      "capabilities": ["mysql_query", "database_access", "aurora_mysql", "rds_data_api", "secrets_manager"],
+      "domains": ["aws", "database", "mysql", "aurora"],
+      "keywords": ["aws", "mcp", "mysql", "aurora", "rds", "data-api", "secrets-manager"],
+      "setup_instructions": "1. Create Aurora MySQL cluster in AWS Console\\n2. Enable RDS Data API on your cluster\\n3. Store database credentials in AWS Secrets Manager\\n4. Note your resource ARN and secret ARN\\n5. Configure vault with connection details:\\n   - vault set mysql_resource_arn 'your-cluster-arn'\\n   - vault set mysql_secret_arn 'your-secret-arn'\\n   - vault set mysql_database 'your-db-name'\\n   - vault set mysql_region 'your-region'\\n   - vault set mysql_readonly 'True' (recommended)\\n6. Configure AWS credentials: aws configure\\n7. Ensure IAM permissions for RDS Data API and Secrets Manager"
+    },
+    {
+      "id": 5,
+      "server_id": "awslabs.postgres-mcp-server",
+      "name": "PostgreSQL MCP Server",
+      "description": "An AWS Labs Model Context Protocol (MCP) server designed for seamless PostgreSQL database interactions through natural language processing. This server converts human-readable questions into PostgreSQL-compatible SQL queries and executes them against configured Aurora PostgreSQL clusters using either RDS Data API or direct database connections. Features intelligent natural language to SQL query translation, dual connection methods for flexibility (RDS Data API for serverless operations or direct psycopg connection for better performance), secure credential management through AWS Secrets Manager integration, and configurable read-only or read-write database operations. Supports local execution alongside LLM clients with AWS profile-based authentication and flexible deployment options including Docker runtime support. Default mode operates in read-only for security, with configurable write permissions when needed. Ideal for AI-assisted database querying, data exploration, reporting workflows, and analytical tasks where users need to interact with PostgreSQL databases using conversational language. Requires Python 3.10, Docker runtime, AWS account with Aurora PostgreSQL cluster, optionally RDS Data API enabled, and appropriate IAM permissions for RDS Data API and Secrets Manager access. Must run locally with configured AWS credentials for secure database connectivity. Offers superior performance through direct connection option while maintaining serverless capabilities via RDS Data API.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": [
+        "awslabs.postgres-mcp-server@latest",
+        "{{env:postgres_connection_method}}",
+        "{{env:postgres_connection_value}}",
+        "--secret_arn", 
+        "{{env:postgres_secret_arn}}",
+        "--database",
+        "{{env:postgres_database}}",
+        "--region",
+        "{{env:postgres_region}}",
+        "--readonly",
+        "{{env:postgres_readonly}}"
+      ],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:postgres_region}}",
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "categories": ["DATA"],
+      "capabilities": ["postgres_query", "database_access", "aurora_postgres", "rds_data_api", "secrets_manager", "direct_connection"],
+      "domains": ["aws", "database", "postgresql", "aurora"],
+      "keywords": ["aws", "mcp", "postgresql", "postgres", "aurora", "rds", "data-api", "secrets-manager"],
+      "setup_instructions": "1. Create Aurora PostgreSQL cluster in AWS Console\\n2. Choose connection method:\\n   - RDS Data API: Enable Data API on your cluster\\n   - Direct Connection: Note your cluster hostname\\n3. Store database credentials in AWS Secrets Manager\\n4. Note your resource ARN/hostname and secret ARN\\n5. Configure vault with connection details:\\n   - vault set postgres_connection_method '--resource_arn' (or '--hostname')\\n   - vault set postgres_connection_value 'your-cluster-arn-or-hostname'\\n   - vault set postgres_secret_arn 'your-secret-arn'\\n   - vault set postgres_database 'your-db-name'\\n   - vault set postgres_region 'your-region'\\n   - vault set postgres_readonly 'True' (recommended)\\n6. Configure AWS credentials: aws configure\\n7. Ensure IAM permissions for RDS Data API and Secrets Manager"
+    },
+    {
+      "id": 6,
+      "server_id": "awslabs.aws-bedrock-data-automation-mcp-server",
+      "name": "AWS Bedrock Data Automation MCP Server",
+      "description": "A Model Context Protocol (MCP) server that enables conversational interactions with AWS Bedrock Data Automation projects. Allows analysis of data assets, workflows, and insights through natural language commands. Provides tools to explore project assets, retrieve project details, and analyze data processing workflows.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": ["awslabs.aws-bedrock-data-automation-mcp-server@latest"],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:aws_region}}",
+        "AWS_BUCKET_NAME": "{{env:bedrock_s3_bucket}}",
+        "BASE_DIR": "{{env:bedrock_base_dir}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["AI", "DATA"],
+      "capabilities": ["bedrock_data_automation", "project_management", "data_analysis", "workflow_insights", "asset_analysis"],
+      "domains": ["aws", "bedrock", "data-automation", "analytics"],
+      "keywords": ["aws", "mcp", "bedrock", "data-automation", "analytics", "workflow"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Set up AWS Bedrock Data Automation in your AWS account\\n3. Create an S3 bucket for data assets\\n4. Configure vault with required parameters:\\n   - vault set bedrock_s3_bucket 'your-s3-bucket-name'\\n   - vault set bedrock_base_dir '/your/base/directory/path'\\n5. Configure AWS credentials: aws configure\\n6. Optional user preferences:\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set aws_region 'your-region' (default: us-east-1)\\n   - vault set log_level 'ERROR' (default: ERROR)\\n7. Ensure IAM permissions for Bedrock Data Automation and S3 access"
+    },
+    {
+      "id": 7,
+      "server_id": "awslabs.cloudwatch-appsignals-mcp-server",
+      "name": "AWS CloudWatch Application Signals MCP Server",
+      "description": "A Model Context Protocol (MCP) server for AWS CloudWatch Application Signals. Provides comprehensive observability for distributed applications through SLIs, SLOs, transaction spans, traces, and service metrics. Enables AI assistants to monitor application performance and troubleshoot issues across microservices architectures.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": ["awslabs.cloudwatch-appsignals-mcp-server@latest"],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:aws_region}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["DEVELOPMENT"],
+      "capabilities": ["application_monitoring", "observability", "metrics_analysis", "trace_investigation", "sli_slo_tracking", "service_monitoring"],
+      "domains": ["aws", "cloudwatch", "observability", "monitoring"],
+      "keywords": ["aws", "mcp", "cloudwatch", "application-signals", "observability", "monitoring", "sli", "slo", "traces"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Enable AWS CloudWatch Application Signals in your AWS account\\n3. Ensure your applications are instrumented with OpenTelemetry\\n4. Configure AWS credentials: aws configure\\n5. Optional user preferences:\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set aws_region 'your-region' (default: us-east-1)\\n   - vault set log_level 'ERROR' (default: ERROR)\\n6. Ensure IAM permissions for CloudWatch Application Signals, X-Ray, and CloudWatch Logs\\n7. Verify Application Signals is collecting data from your services"
+    },
+    {
+      "id": 8,
+      "server_id": "awslabs.cloudwatch-mcp-server",
+      "name": "AWS CloudWatch MCP Server",
+      "description": "A Model Context Protocol (MCP) server for AWS CloudWatch. Provides comprehensive access to CloudWatch metrics, alarms, and log analytics. Enables AI assistants to monitor AWS resources, analyze performance data, investigate alerts, and perform log analysis with CloudWatch Logs Insights. Essential tool for AWS infrastructure monitoring and troubleshooting.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": ["awslabs.cloudwatch-mcp-server@latest"],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["DEVELOPMENT"],
+      "capabilities": ["cloudwatch_metrics", "alarm_management", "log_analytics", "monitoring", "insights_queries", "anomaly_detection"],
+      "domains": ["aws", "cloudwatch", "monitoring", "logging"],
+      "keywords": ["aws", "mcp", "cloudwatch", "metrics", "alarms", "logs", "monitoring", "insights"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Install Python 3.10: uv python install 3.10\\n3. Configure AWS credentials: aws configure\\n4. Optional user preferences:\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set log_level 'ERROR' (default: ERROR)\\n5. Ensure IAM permissions for CloudWatch:\\n   - cloudwatch:GetMetricData\\n   - cloudwatch:ListMetrics\\n   - cloudwatch:DescribeAlarms\\n   - cloudwatch:GetMetricStatistics\\n   - logs:DescribeLogGroups\\n   - logs:StartQuery\\n   - logs:GetQueryResults\\n   - logs:FilterLogEvents\\n6. Test connection to verify CloudWatch access"
+    },
+    {
+      "id": 9,
+      "server_id": "aws.aws-dataprocessing-mcp-server",
+      "name": "AWS Data Processing MCP Server",
+      "description": "A Model Context Protocol (MCP) server for AWS data processing services. Provides comprehensive access to AWS Glue Data Catalog, EMR cluster management, Athena query operations, and ETL job orchestration. Enables AI assistants to manage data pipelines, execute analytics workloads, and perform interactive data processing with support for both read-only and write operations.",
+      "version": "0.1.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": [
+        "aws.aws-dataprocessing-mcp-server@latest",
+        "{{env:allow_write_flag}}",
+        "{{env:allow_sensitive_data_flag}}"
+      ],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:aws_region}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["DATA", "DEVELOPMENT"],
+      "capabilities": ["data_catalog_management", "emr_cluster_management", "athena_queries", "etl_orchestration", "data_processing", "glue_operations"],
+      "domains": ["aws", "data-processing", "glue", "emr", "athena"],
+      "keywords": ["aws", "mcp", "data-processing", "glue", "emr", "athena", "etl", "analytics"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\\\n2. Install Python 3.10+: uv python install 3.10\\\\n3. Configure AWS credentials: aws configure\\\\n4. Optional user preferences:\\\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\\\n   - vault set aws_region 'your-region' (default: us-east-1)\\\\n   - vault set allow_write_flag '--allow-write' (enables mutations, default: read-only)\\\\n   - vault set allow_sensitive_data_flag '--allow-sensitive-data-access' (enables sensitive data access)\\\\n   - vault set log_level 'WARNING' (default: WARNING)\\\\n5. Ensure IAM permissions for data processing services:\\\\n   - glue:* (for Data Catalog operations)\\\\n   - emr:* (for cluster management)\\\\n   - athena:* (for query operations)\\\\n   - s3:* (for data access)\\\\n   - iam:* (for resource management)\\\\n6. Test connection to verify data processing service access"
+    },
+    {
+      "id": 10,
+      "server_id": "awslabs.cdk-mcp-server",
+      "name": "AWS CDK MCP Server",
+      "description": "An AWS Labs Model Context Protocol (MCP) server that provides comprehensive guidance and automation tools for AWS Cloud Development Kit (CDK) development and infrastructure as code best practices. This server offers prescriptive patterns using AWS Solutions Constructs, structured decision-making for implementation approaches, and integrated security automation through CDK Nag compliance checks. Features CDK general guidance with best practices, CDK Nag integration for security and compliance rule validation, specialized capabilities for AWS Solutions Constructs discovery, generative AI CDK Constructs search functionality, Lambda Layer documentation provider, and Amazon Bedrock Agent schema generation. Supports infrastructure as code patterns with automated security compliance enforcement, code review for Nag suppressions, and comprehensive CDK project lifecycle management from setup to deployment. Ideal for AWS developers, cloud infrastructure engineers, DevOps professionals, and AI/ML solution architects seeking to implement secure, compliant infrastructure as code using CDK best practices. Requires Python 3.10, uv package manager, AWS CDK CLI, and appropriate AWS credentials. Provides visual workflow diagrams for CDK implementation covering project setup, development, security checks, and deployment processes.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": ["awslabs.cdk-mcp-server@latest"],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:aws_region}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["DEVELOPMENT"],
+      "capabilities": ["cdk_guidance", "infrastructure_as_code", "security_compliance", "cdk_nag_integration", "solutions_constructs", "lambda_layers", "bedrock_schemas"],
+      "domains": ["aws", "cdk", "infrastructure", "iac", "security"],
+      "keywords": ["aws", "mcp", "cdk", "infrastructure-as-code", "security", "compliance", "nag", "constructs"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Install Python 3.10: uv python install 3.10\\n3. Install AWS CDK CLI: npm install -g aws-cdk\\n4. Configure AWS credentials: aws configure\\n5. Optional user preferences:\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set aws_region 'your-region' (default: us-east-1)\\n   - vault set log_level 'ERROR' (default: ERROR)\\n6. Ensure IAM permissions for CDK operations:\\n   - cloudformation:* (for stack operations)\\n   - iam:* (for role management)\\n   - s3:* (for CDK assets)\\n   - ssm:* (for parameter access)\\n7. Initialize CDK project if needed: cdk init\\n8. Test CDK environment: cdk doctor"
+    },
+    {
+      "id": 11,
+      "server_id": "awslabs.lambda-tool-mcp-server",
+      "name": "AWS Lambda Tool MCP Server",
+      "description": "An AWS Labs Model Context Protocol (MCP) server that acts as a secure bridge between MCP clients and AWS Lambda functions, enabling generative AI models to access and execute Lambda functions as extensible tools. This server provides controlled access to private resources and AWS services through Lambda function invocation, implementing segregation of duties and granular access control. Features secure Lambda function discovery via prefixes and tags, function invocation without code changes, access to internal applications and databases through VPC connectivity, interaction with AWS services and public internet resources, and comprehensive input schema validation via EventBridge Schema Registry integration. Supports controlled function execution based on predefined criteria, maintains individual Lambda function resource access permissions, and provides AI models with the ability to use serverless functions as dynamic tools. Ideal for accessing private network resources through AI assistants, executing serverless tools via generative AI, providing secure and controlled function execution, extending AI capabilities with custom Lambda-based tools, and enabling AI-driven automation workflows. Requires Python 3.10, uv package manager, AWS credentials with Lambda invocation permissions, and properly configured Lambda functions with appropriate IAM roles. Essential for organizations seeking to provide AI assistants with secure access to internal systems and custom business logic through serverless functions.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": [
+        "awslabs.lambda-tool-mcp-server@latest",
+        "--function-prefix",
+        "{{env:lambda_function_prefix}}",
+        "--region",
+        "{{env:lambda_region}}"
+      ],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:lambda_region}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["DEVELOPMENT"],
+      "capabilities": ["lambda_invocation", "function_discovery", "schema_validation", "private_resource_access", "serverless_tools", "ai_function_bridge"],
+      "domains": ["aws", "lambda", "serverless", "functions", "ai-tools"],
+      "keywords": ["aws", "mcp", "lambda", "serverless", "functions", "ai-tools", "bridge", "invocation"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Install Python 3.10: uv python install 3.10\\n3. Configure AWS credentials: aws configure\\n4. Create Lambda functions with consistent naming prefix\\n5. Configure vault with Lambda details:\\n   - vault set lambda_function_prefix 'your-function-prefix'\\n   - vault set lambda_region 'your-region'\\n6. Optional user preferences:\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set log_level 'ERROR' (default: ERROR)\\n7. Ensure IAM permissions for Lambda:\\n   - lambda:InvokeFunction\\n   - lambda:ListFunctions\\n   - lambda:GetFunction\\n   - logs:CreateLogGroup\\n   - logs:CreateLogStream\\n   - logs:PutLogEvents\\n8. Test function discovery and invocation"
+    },
+    {
+      "id": 12,
+      "server_id": "awslabs.eks-mcp-server",
+      "name": "Amazon EKS MCP Server",
+      "description": "An AWS Labs Model Context Protocol (MCP) server designed as an AI code assistant tool for managing Amazon Elastic Kubernetes Service (EKS) clusters and Kubernetes resources through intelligent, context-aware interactions. This server enables large language models (LLMs) with essential tooling and contextual awareness to streamline complex Kubernetes operations through natural language interactions. Features comprehensive EKS cluster management with automated infrastructure setup, containerized application deployment support, full Kubernetes resource management (create, read, update, delete operations), log and event retrieval capabilities, intelligent troubleshooting guidance, and seamless CloudWatch integration for metrics and logging. Supports both read-only and write-access modes with granular permissions, implements least-privilege access with AWS authentication, enforces SSL verification, and provides temporary credential generation. Ideal for EKS cluster creation and management, Kubernetes application deployment, cluster monitoring and troubleshooting, development workflow optimization, and AI-assisted infrastructure management. Requires Python 3.10+, uv package manager, and configured AWS CLI credentials. Offers deployment flexibility through Cursor IDE integration, Amazon Q Developer CLI, JSON configuration support, and containerized deployment options. Essential for developers and AI assistants seeking to interact with and manage Kubernetes infrastructure more intelligently and efficiently.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": [
+        "awslabs.eks-mcp-server@latest",
+        "--cluster-name",
+        "{{env:eks_cluster_name}}",
+        "--region",
+        "{{env:eks_region}}",
+        "{{env:eks_write_mode_flag}}"
+      ],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:eks_region}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["DEVELOPMENT"],
+      "capabilities": ["eks_management", "kubernetes_resources", "container_deployment", "cluster_monitoring", "cloudwatch_integration", "troubleshooting", "iam_management"],
+      "domains": ["aws", "eks", "kubernetes", "containers", "orchestration"],
+      "keywords": ["aws", "mcp", "eks", "kubernetes", "containers", "cluster", "deployment", "monitoring"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Install Python 3.10: uv python install 3.10\\n3. Install kubectl: curl -LO https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl\\n4. Configure AWS credentials: aws configure\\n5. Configure vault with EKS details:\\n   - vault set eks_cluster_name 'your-cluster-name'\\n   - vault set eks_region 'your-region'\\n6. Optional user preferences:\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set eks_write_mode_flag '--write-access' (enables mutations)\\n   - vault set log_level 'ERROR' (default: ERROR)\\n7. Ensure IAM permissions for EKS:\\n   - eks:DescribeCluster\\n   - eks:ListClusters\\n   - eks:AccessKubernetesApi\\n   - cloudwatch:GetMetricData\\n   - logs:DescribeLogGroups\\n   - iam:ListRoles\\n8. Update kubeconfig: aws eks update-kubeconfig --region your-region --name your-cluster\\n9. Test cluster access: kubectl get nodes"
+    },
+    {
+      "id": 13,
+      "server_id": "awslabs.cfn-mcp-server",
+      "name": "AWS CloudFormation MCP Server",
+      "description": "An AWS Labs Model Context Protocol (MCP) server that enables natural language management of 1,100+ AWS resources through AWS Cloud Control API and Infrastructure as Code (IaC) generation capabilities. This server provides a comprehensive interface for declarative infrastructure management, supporting resource creation, reading, updating, deletion, and listing operations through natural language commands. Features resource lifecycle management with validation, CloudFormation template generation capabilities, support for both AWS-native and third-party partner resources, and seamless integration with AWS Cloud Control API for consistent resource management. Offers tools for creating resources declaratively, reading resource properties and attributes, updating existing resources with change validation, deleting resources with safety checks, listing available resources by type, retrieving resource schema information, and generating CloudFormation templates from specifications. Ideal for dynamic infrastructure management, natural language resource provisioning, infrastructure template generation, multi-resource environment setup, and AI-assisted AWS resource management workflows. Requires configured AWS credentials and appropriate IAM permissions for intended resource operations. Supports optional read-only mode for safe exploration and integrates with AWS CloudTrail for auditing. Essential for developers, DevOps engineers, and cloud architects seeking to manage AWS infrastructure through conversational interfaces.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": [
+        "awslabs.cfn-mcp-server@latest",
+        "{{env:cfn_readonly_flag}}"
+      ],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:aws_region}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["DEVELOPMENT"],
+      "capabilities": ["cloudformation", "infrastructure_as_code", "resource_management", "template_generation", "cloud_control_api", "aws_resources"],
+      "domains": ["aws", "cloudformation", "infrastructure", "iac", "resources"],
+      "keywords": ["aws", "mcp", "cloudformation", "infrastructure", "iac", "resources", "cloud-control", "templates"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Install Python 3.10: uv python install 3.10\\n3. Configure AWS credentials: aws configure\\n4. Optional user preferences:\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set aws_region 'your-region' (default: us-east-1)\\n   - vault set cfn_readonly_flag '--readonly' (enables read-only mode)\\n   - vault set log_level 'ERROR' (default: ERROR)\\n5. Ensure IAM permissions for CloudFormation and Cloud Control API:\\n   - cloudformation:* (for stack operations)\\n   - cloudcontrol:* (for resource management)\\n   - Additional permissions based on managed resources\\n6. Optional: Enable AWS CloudTrail for auditing\\n7. Test connection: aws cloudformation list-stacks"
+    },
+    {
+      "id": 14,
+      "server_id": "awslabs.terraform-mcp-server",
+      "name": "AWS Terraform MCP Server",
+      "description": "An AWS Labs Model Context Protocol (MCP) server that provides comprehensive Terraform best practices guidance and security-first development workflows for AWS infrastructure deployment. This server integrates Checkov security scanning, AWS provider documentation search, and AI/ML infrastructure module support to streamline secure Terraform development. Features prescriptive advice for Terraform configurations on AWS, automated security scanning at development stages, step-by-step guidance for secure infrastructure deployment, analysis capabilities for Terraform Registry modules, and integrated security issue identification with detailed remediation guidance. Supports Terraform and Terragrunt workflow execution, structured development workflows with regular security scanning, emphasis on vulnerability fixing, preference for AWSCC provider with enhanced security defaults, and alignment with AWS Well-Architected framework principles. Ideal for DevOps engineers, cloud architects, infrastructure developers, and security professionals working with AWS who need to implement secure infrastructure as code practices. Requires Python 3.10, uv package manager, Terraform CLI, and Checkov security scanner. Essential for organizations seeking to automate secure Terraform infrastructure development on AWS with integrated guidance, scanning, and compliance validation.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": ["awslabs.terraform-mcp-server@latest"],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:aws_region}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["DEVELOPMENT"],
+      "capabilities": ["terraform", "infrastructure_as_code", "security_scanning", "checkov_integration", "aws_provider", "terragrunt", "best_practices"],
+      "domains": ["aws", "terraform", "infrastructure", "iac", "security"],
+      "keywords": ["aws", "mcp", "terraform", "infrastructure", "iac", "security", "checkov", "terragrunt"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Install Python 3.10: uv python install 3.10\\n3. Install Terraform CLI: https://developer.hashicorp.com/terraform/downloads\\n4. Install Checkov: pip install checkov\\n5. Configure AWS credentials: aws configure\\n6. Optional user preferences:\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set aws_region 'your-region' (default: us-east-1)\\n   - vault set log_level 'ERROR' (default: ERROR)\\n7. Ensure IAM permissions for intended Terraform resources\\n8. Initialize Terraform project: terraform init\\n9. Test Checkov scanning: checkov --help"
+    },
+    {
+      "id": 15,
+      "server_id": "awslabs.ecs-mcp-server",
+      "name": "AWS ECS MCP Server",
+      "description": "An AWS Labs Model Context Protocol (MCP) server designed for containerization and deployment of applications to Amazon Elastic Container Service (ECS) with AI-assisted guidance for the complete containerized application lifecycle. Currently in active development and optimized for non-production environments, this server provides comprehensive containerization guidance, ECS deployment automation, load balancer integration, Infrastructure as Code generation, security best practices implementation, and resource management for both ECS and ECR services. Features tools for generating container configurations, automating AWS infrastructure deployment, checking deployment status and retrieving ALB URLs, removing deployed components safely, listing and managing ECS resources, and diagnosing deployment issues through intelligent troubleshooting. Supports security controls through configurable write permissions and sensitive data access restrictions, with recommendations for dedicated IAM roles using least-privilege permissions. Ideal for development and prototyping environments, learning and exploration of containerized workflows, testing and staging applications, and AI-assisted container lifecycle management. Requires Docker or Finch, UV package manager, Python 3.10+, and properly configured AWS credentials. Not recommended for production workloads or regulated/sensitive applications. Essential for developers and DevOps teams seeking to learn and implement containerized application deployment patterns on AWS ECS with intelligent automation and guidance.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": [
+        "awslabs.ecs-mcp-server@latest",
+        "{{env:ecs_allow_write_flag}}",
+        "{{env:ecs_allow_sensitive_data_flag}}"
+      ],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:aws_region}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["DEVELOPMENT"],
+      "capabilities": ["containerization", "ecs_deployment", "load_balancer_integration", "infrastructure_automation", "ecr_management", "container_troubleshooting"],
+      "domains": ["aws", "ecs", "containers", "deployment", "docker"],
+      "keywords": ["aws", "mcp", "ecs", "containers", "deployment", "docker", "containerization", "ecr"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Install Python 3.10: uv python install 3.10\\n3. Install Docker or Finch for containerization\\n4. Configure AWS credentials: aws configure\\n5. Optional user preferences:\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set aws_region 'your-region' (default: us-east-1)\\n   - vault set ecs_allow_write_flag '--allow-write' (enables infrastructure changes)\\n   - vault set ecs_allow_sensitive_data_flag '--allow-sensitive-data' (enables sensitive data access)\\n   - vault set log_level 'ERROR' (default: ERROR)\\n6. Ensure IAM permissions for ECS and ECR:\\n   - ecs:* (for cluster and service management)\\n   - ecr:* (for container registry operations)\\n   - iam:* (for role management)\\n   - ec2:* (for VPC and load balancer resources)\\n7. Test Docker/Finch: docker --version\\n8. WARNING: Use only for development/testing, not production workloads"
+    },
+    {
+      "id": 16,
+      "server_id": "awslabs.bedrock-kb-retrieval-mcp-server",
+      "name": "Amazon Bedrock Knowledge Base Retrieval MCP Server",
+      "description": "An AWS Labs Model Context Protocol (MCP) server designed for accessing and querying Amazon Bedrock Knowledge Bases with advanced search capabilities and natural language processing. This server provides knowledge base discovery functionality to find and explore available knowledge bases, search by name or tag, and list associated data sources. Features natural language querying capabilities for retrieving information through conversational queries, extracting relevant passages from knowledge bases, and accessing citation information for results. Supports advanced search capabilities including filtering results by specific data sources, prioritizing or excluding certain data sources, and reranking results using Amazon Bedrock's capabilities. Offers seamless integration with Amazon Bedrock Knowledge Bases, intelligent query translation for semantic search, and comprehensive metadata extraction for enhanced search accuracy. Ideal for enterprise knowledge discovery, semantic search across organizational documents, AI-powered information retrieval, and building intelligent question-answering systems. Requires Python 3.10, AWS CLI configured with Bedrock access, at least one Knowledge Base tagged with 'mcp-multirag-kb=true', and appropriate IAM permissions for listing knowledge bases, accessing data sources, and querying knowledge bases. Essential for organizations seeking to implement AI-driven knowledge management and document discovery workflows.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": ["awslabs.bedrock-kb-retrieval-mcp-server@latest"],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:aws_region}}",
+        "BEDROCK_KB_RERANKING_ENABLED": "{{env:bedrock_reranking_enabled}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["AI"],
+      "capabilities": ["knowledge_base_search", "natural_language_querying", "document_retrieval", "semantic_search", "citation_extraction", "reranking"],
+      "domains": ["aws", "bedrock", "knowledge-base", "search", "ai"],
+      "keywords": ["aws", "mcp", "bedrock", "knowledge-base", "semantic-search", "retrieval", "ai", "nlp"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Install Python 3.10: uv python install 3.10\\n3. Configure AWS credentials: aws configure\\n4. Create and tag Knowledge Bases with 'mcp-multirag-kb=true'\\n5. Optional user preferences:\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set aws_region 'your-region' (default: us-east-1)\\n   - vault set bedrock_reranking_enabled 'true' (enables reranking)\\n   - vault set log_level 'ERROR' (default: ERROR)\\n6. Ensure IAM permissions for Bedrock:\\n   - bedrock:ListKnowledgeBases\\n   - bedrock:GetKnowledgeBase\\n   - bedrock:QueryKnowledgeBase\\n   - bedrock:ListDataSources\\n7. Test Knowledge Base access: aws bedrock list-knowledge-bases"
+    },
+    {
+      "id": 17,
+      "server_id": "awslabs.documentdb-mcp-server",
+      "name": "Amazon DocumentDB MCP Server",
+      "description": "An AWS Labs Model Context Protocol (MCP) server designed for AWS DocumentDB that enables AI assistants to interact with DocumentDB databases through intelligent, secure, and controlled operations. This server provides comprehensive database interaction capabilities including connection management to DocumentDB clusters, database and collection management operations, document operations for querying and manipulation, aggregation pipeline support for complex data processing, query planning and optimization guidance, and schema analysis for understanding data structures. Features default read-only mode to prevent unintended database modifications, configurable write operations that can be enabled with specific flags, secure TLS connections with certificate support, and granular operation control for enhanced security. Supports MongoDB-compatible operations through DocumentDB's API, intelligent query execution planning, and AI-assisted database exploration capabilities. Ideal for AI-assisted database exploration, secure database interaction in production environments, development and demonstration scenarios, and building intelligent database management workflows. Requires network access to DocumentDB cluster, SSL/TLS certificates for secure connections, and appropriate AWS credentials with DocumentDB permissions. Essential for organizations seeking to implement AI-driven database management and exploration while maintaining strict security controls.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": [
+        "awslabs.documentdb-mcp-server@latest",
+        "--cluster-endpoint",
+        "{{env:documentdb_cluster_endpoint}}",
+        "--username",
+        "{{env:documentdb_username}}",
+        "--password",
+        "{{env:documentdb_password}}",
+        "{{env:documentdb_allow_write_flag}}"
+      ],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:documentdb_region}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["DATA"],
+      "capabilities": ["documentdb_access", "mongodb_compatible", "document_operations", "aggregation_pipelines", "schema_analysis", "query_planning"],
+      "domains": ["aws", "documentdb", "mongodb", "database", "nosql"],
+      "keywords": ["aws", "mcp", "documentdb", "mongodb", "nosql", "database", "documents"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Install Python 3.10: uv python install 3.10\\n3. Create DocumentDB cluster in AWS Console\\n4. Download SSL/TLS certificate: wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem\\n5. Configure vault with DocumentDB details:\\n   - vault set documentdb_cluster_endpoint 'your-cluster-endpoint'\\n   - vault set documentdb_username 'your-username'\\n   - vault set documentdb_password 'your-password'\\n   - vault set documentdb_region 'your-region'\\n6. Optional user preferences:\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set documentdb_allow_write_flag '--allow-write' (enables mutations)\\n   - vault set log_level 'ERROR' (default: ERROR)\\n7. Ensure network connectivity to DocumentDB cluster\\n8. Test connection with MongoDB client"
+    },
+    {
+      "id": 18,
+      "server_id": "awslabs.dynamodb-mcp-server",
+      "name": "AWS DynamoDB MCP Server",
+      "description": "An AWS Labs Model Context Protocol (MCP) server providing comprehensive DynamoDB interaction capabilities with 30+ operational tools for managing DynamoDB resources, tables, items, queries, backups, and advanced database operations. This server offers complete DynamoDB lifecycle management including design and modeling guidance, table operations (create, delete, update, describe), item operations (get, put, update, delete), query and scan functions with advanced filtering, backup and recovery tools for data protection, Time to Live (TTL) management for automated data cleanup, and export and resource policy operations. Features expert data modeling guidance for optimal schema design, comprehensive API operation mapping for full DynamoDB functionality, automatic credential and region detection for seamless AWS integration, and flexible deployment options including read-only configurations for safe exploration. Supports multiple installation methods and uses standard AWS credential sources for authentication. Ideal for DynamoDB resource management, database design and modeling, operational monitoring and maintenance, development and testing environments, and building scalable NoSQL applications. Requires Python 3.10, AWS credentials with appropriate DynamoDB permissions, and optional configuration for region and profile specifications. Essential for developers and database administrators seeking comprehensive DynamoDB management capabilities through AI-assisted interfaces.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": [
+        "awslabs.dynamodb-mcp-server@latest",
+        "{{env:dynamodb_readonly_flag}}"
+      ],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:aws_region}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["DATA"],
+      "capabilities": ["dynamodb_management", "table_operations", "item_operations", "query_scan", "backup_recovery", "ttl_management", "data_modeling"],
+      "domains": ["aws", "dynamodb", "nosql", "database", "serverless"],
+      "keywords": ["aws", "mcp", "dynamodb", "nosql", "database", "serverless", "table", "items"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Install Python 3.10: uv python install 3.10\\n3. Configure AWS credentials: aws configure\\n4. Optional user preferences:\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set aws_region 'your-region' (default: us-east-1)\\n   - vault set dynamodb_readonly_flag '--readonly' (enables read-only mode)\\n   - vault set log_level 'ERROR' (default: ERROR)\\n5. Ensure IAM permissions for DynamoDB:\\n   - dynamodb:* (for full operations)\\n   - Or specific permissions based on use case\\n6. Test connection: aws dynamodb list-tables"
+    },
+    {
+      "id": 19,
+      "server_id": "awslabs.valkey-mcp-server",
+      "name": "Amazon ElastiCache/MemoryDB for Valkey MCP Server",
+      "description": "An AWS Labs Model Context Protocol (MCP) server for Amazon ElastiCache Valkey datastores, providing comprehensive tools to operate on various Valkey data types including Strings, Lists, Sets, Sorted Sets, Hashes, Streams, Bitmaps, JSONs, and HyperLogLog. Features natural language interaction capabilities for operations like storing user profile data in hashes, adding events to activity streams, and caching API responses with TTL. Supports advanced features including cluster support, SSL/TLS security, connection pooling, and readonly mode option for safe data exploration. Enables AI assistants to efficiently manage data operations through conversational interfaces with built-in retry mechanisms and automatic connection management. Ideal for AI-assisted cache management, data operations automation, and building intelligent caching workflows. Requires network access to Valkey datastore and appropriate AWS credentials for ElastiCache operations.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": [
+        "awslabs.valkey-mcp-server@latest",
+        "--host",
+        "{{env:valkey_host}}",
+        "--port",
+        "{{env:valkey_port}}",
+        "{{env:valkey_readonly_flag}}"
+      ],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:aws_region}}",
+        "VALKEY_SSL": "{{env:valkey_ssl_enabled}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["DATA"],
+      "capabilities": ["valkey_operations", "cache_management", "data_structures", "cluster_support", "ssl_tls", "connection_pooling"],
+      "domains": ["aws", "elasticache", "valkey", "cache", "data-structures"],
+      "keywords": ["aws", "mcp", "valkey", "elasticache", "cache", "data-structures", "redis-compatible"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Install Python 3.10: uv python install 3.10\\n3. Create or access ElastiCache Valkey cluster\\n4. Configure vault with connection details:\\n   - vault set valkey_host 'your-cluster-endpoint'\\n   - vault set valkey_port '6379'\\n   - vault set valkey_ssl_enabled 'true' (recommended)\\n5. Optional user preferences:\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set aws_region 'your-region' (default: us-east-1)\\n   - vault set valkey_readonly_flag '--readonly' (enables read-only mode)\\n   - vault set log_level 'ERROR' (default: ERROR)\\n6. Ensure network connectivity to Valkey cluster\\n7. Test connection with Valkey client"
+    },
+    {
+      "id": 20,
+      "server_id": "awslabs.memcached-mcp-server",
+      "name": "Amazon ElastiCache for Memcached MCP Server",
+      "description": "An AWS Labs Model Context Protocol (MCP) server for securely interacting with Amazon ElastiCache Memcached through reliable connections with full support for standard Memcached operations. Features comprehensive Memcached protocol support, secure SSL/TLS communication, automatic connection management with built-in retry mechanisms, and optional readonly mode to prevent write operations for production safety. Supports flexible deployment configurations including local and containerized environments with configurable environment variables. Enables AI assistants to efficiently manage cached data through natural language interfaces while maintaining security best practices. Ideal for cache management automation, development and debugging workflows, and building intelligent caching solutions. Requires network access to Memcached server and appropriate configuration for connection parameters including SSL/TLS settings for secure communication.",
+      "version": "1.0.0",
+      "execution_type": "LOCAL",
+      "security_level": "CREDENTIALS",
+      "command": "uvx",
+      "args": [
+        "awslabs.memcached-mcp-server@latest",
+        "--host",
+        "{{env:memcached_host}}",
+        "--port", 
+        "{{env:memcached_port}}",
+        "{{env:memcached_readonly_flag}}"
+      ],
+      "env": {
+        "AWS_PROFILE": "{{env:aws_profile}}",
+        "AWS_REGION": "{{env:aws_region}}",
+        "MEMCACHED_USE_TLS": "{{env:memcached_use_tls}}",
+        "MEMCACHED_TIMEOUT": "{{env:memcached_timeout}}",
+        "FASTMCP_LOG_LEVEL": "{{env:log_level}}"
+      },
+      "categories": ["DATA"],
+      "capabilities": ["memcached_operations", "cache_management", "ssl_tls_support", "automatic_retries", "readonly_mode"],
+      "domains": ["aws", "elasticache", "memcached", "cache", "memory"],
+      "keywords": ["aws", "mcp", "memcached", "elasticache", "cache", "memory", "key-value"],
+      "setup_instructions": "1. Ensure uv is installed: curl -LsSf https://astral.sh/uv/install.sh | sh\\n2. Install Python 3.10: uv python install 3.10\\n3. Create or access ElastiCache Memcached cluster\\n4. Configure vault with connection details:\\n   - vault set memcached_host 'your-cluster-endpoint'\\n   - vault set memcached_port '11211'\\n   - vault set memcached_use_tls 'true' (recommended)\\n   - vault set memcached_timeout '30'\\n5. Optional user preferences:\\n   - vault set aws_profile 'your-aws-profile' (default: default)\\n   - vault set aws_region 'your-region' (default: us-east-1)\\n   - vault set memcached_readonly_flag '--readonly' (enables read-only mode)\\n   - vault set log_level 'ERROR' (default: ERROR)\\n6. Ensure network connectivity to Memcached cluster\\n7. Test connection with Memcached client"
+    }
+  ]
+}
