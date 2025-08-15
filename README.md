@@ -7,7 +7,7 @@ An open-source, **locally-hosted AI platform** that intelligently routes user pr
 Watch MCP AWS YOLO in action - intelligent routing from user prompts to AWS operations (it's quite slow because the local LLM runs on CPU):
 
 
-[![MCP AWS YOLO demo](https://img.youtube.com/vi/SlfYOZFtAdk/0.jpg)](https://www.youtube.com/watch?v=SlfYOZFtAdk)
+[![MCP AWS YOLO demo](demo/mcp_aws_yolo.png)](https://www.youtube.com/watch?v=SlfYOZFtAdk)
 
 
 *Demo shows: Natural language prompt → Intelligent server selection → AWS S3 bucket creation*
