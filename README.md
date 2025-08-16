@@ -227,15 +227,69 @@ The system uses `aws_config.json` for AWS-specific settings:
 
 ### MCP Server Registry
 
-The system includes a curated registry of AWS-focused MCP servers in `mcp_registry.json`:
+The system includes a comprehensive registry of **53 AWS MCP servers** in `mcp_registry_v1.json`:
 
-- **awslabs.aws-api-mcp-server**: AWS CLI operations and infrastructure management
-- **aws-knowledge-mcp-server**: AWS documentation and best practices  
-- **awslabs.dynamodb-mcp-server**: DynamoDB table and item operations
-- **awslabs.lambda-tool-mcp-server**: Lambda function invocation and management
-- **awslabs.eks-mcp-server**: Kubernetes cluster management
-- **awslabs.cloudwatch-mcp-server**: Monitoring and log analytics
-- And 20+ more AWS MCP servers...
+| No. | Server Name | Category |
+|-----|-------------|----------|
+| 1 | AWS API MCP Server | Development |
+| 2 | AWS Knowledge MCP Server | Documentation |
+| 3 | Aurora DSQL MCP Server | Data |
+| 4 | MySQL MCP Server | Data |
+| 5 | PostgreSQL MCP Server | Data |
+| 6 | AWS Bedrock Data Automation MCP Server | AI |
+| 7 | CloudWatch Application Signals MCP Server | Development |
+| 8 | CloudWatch MCP Server | Development |
+| 9 | AWS Data Processing MCP Server | Data |
+| 10 | CDK MCP Server | Development |
+| 11 | Lambda Tool MCP Server | Development |
+| 12 | EKS MCP Server | Development |
+| 13 | CloudFormation MCP Server | Development |
+| 14 | Terraform MCP Server | Development |
+| 15 | ECS MCP Server | Development |
+| 16 | Bedrock KB Retrieval MCP Server | AI |
+| 17 | DocumentDB MCP Server | Data |
+| 18 | DynamoDB MCP Server | Data |
+| 19 | ElastiCache/MemoryDB for Valkey MCP Server | Data |
+| 20 | ElastiCache for Memcached MCP Server | Data |
+| 21 | Code Documentation Generation MCP Server | Development |
+| 22 | Core MCP Server | Development |
+| 23 | Cost Explorer MCP Server | Development |
+| 24 | Finch MCP Server | Development |
+| 25 | Frontend MCP Server | Development |
+| 26 | Git Repo Research MCP Server | Development |
+| 27 | ElastiCache MCP Server | Data |
+| 28 | IAM MCP Server | Development |
+| 29 | MCP Lambda Handler Module | Development |
+| 30 | Nova Canvas MCP Server | AI |
+| 31 | OpenAPI MCP Server | Development |
+| 32 | Prometheus MCP Server | Development |
+| 33 | Redshift MCP Server | Data |
+| 34 | S3 Tables MCP Server | Data |
+| 35 | Step Functions Tool MCP Server | Development |
+| 36 | Synthetic Data MCP Server | Data |
+| 37 | Timestream for InfluxDB MCP Server | Data |
+| 38 | Kendra Index MCP Server | AI |
+| 39 | Keyspaces MCP Server | Data |
+| 40 | MQ MCP Server | Development |
+| 41 | Neptune MCP Server | Data |
+| 42 | Q Business Anonymous MCP Server | AI |
+| 43 | Rekognition MCP Server | AI |
+| 44 | SNS/SQS MCP Server | Development |
+| 45 | Diagram MCP Server | Development |
+| 46 | HealthOmics MCP Server | Data |
+| 47 | Location Service MCP Server | Development |
+| 48 | Serverless MCP Server | Development |
+| 49 | Support MCP Server | Development |
+| 50 | Q Index MCP Server | AI |
+| 51 | Documentation MCP Server | Documentation |
+| 52 | MSK MCP Server | Data |
+| 53 | Pricing MCP Server | Development |
+
+**Categories Summary:**
+- **AI & Machine Learning**: 7 servers
+- **Data & Database**: 17 servers  
+- **Development & Infrastructure**: 27 servers
+- **Documentation**: 2 servers
 
 ## Development
 
