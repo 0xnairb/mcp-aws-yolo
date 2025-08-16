@@ -227,7 +227,7 @@ The system uses `aws_config.json` for AWS-specific settings:
 
 ### MCP Server Registry
 
-The system includes a comprehensive registry of **53 AWS MCP servers** in `mcp_registry_v1.json`:
+The system includes a comprehensive registry of **53 AWS MCP servers** in `mcp_registry.json`:
 
 | No. | Server Name | Category |
 |-----|-------------|----------|
